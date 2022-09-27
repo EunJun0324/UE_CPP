@@ -16,6 +16,8 @@ private :
 	// UStaticMeshComponent 
 	// 해당 클래스에서 Mesh 기능을 추가할 수 있습니다.
 
+	class UMaterialInstanceDynamic* Material;
+
 public:	
 	AC02_Mesh();
 
@@ -25,4 +27,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	// UFUNCTION : 에디터에서 관리할 함수라는 것을 명시하는 키워드
+	UFUNCTION()
+	void ChangeColor();
 };
