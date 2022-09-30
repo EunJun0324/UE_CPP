@@ -29,4 +29,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+private :
+	UFUNCTION()
+		void OnBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+	
+	UFUNCTION()
+		void OnEndOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
 };
