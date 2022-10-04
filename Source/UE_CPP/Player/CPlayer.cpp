@@ -40,22 +40,22 @@ ACPlayer::ACPlayer()
 	// SpringArm 의 시작 지점의 y 위치를 60 으로 설정합니다.
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	// 해당 캐릭터가 플레이어라는 것을 설정합니다.
 }
 
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACPlayer::OnMoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
+	PlayerInputComponent->BindAxis("MoveForward",    this, &ACPlayer::OnMoveForward);
+	PlayerInputComponent->BindAxis("MoveRight",      this, &ACPlayer::OnMoveRight);
 	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayer::OnHorizontalLook);
-	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayer::OnVerticalLook);
+	PlayerInputComponent->BindAxis("VerticalLook",   this, &ACPlayer::OnVerticalLook);
 
 }
 
