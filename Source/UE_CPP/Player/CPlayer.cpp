@@ -25,7 +25,7 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->MaxWalkSpeed = 400;
 	// 캐릭터의 이동속도를 400으로 설정합니다.
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(L"");
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(L"SkeletalMesh'/Game/Character/Mesh/SK_Mannequin.SK_Mannequin'");
 	if (mesh.Succeeded()) GetMesh()->SetSkeletalMesh(mesh.Object);
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -39,6 +39,7 @@ ACPlayer::ACPlayer()
 	SpringArm->SocketOffset = FVector(0, 60, 0);
 	// SpringArm 의 시작 지점의 y 위치를 60 으로 설정합니다.
 
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 void ACPlayer::BeginPlay()
@@ -51,21 +52,36 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACPlayer::OnMoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
+	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayer::OnHorizontalLook);
+	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayer::OnVerticalLook);
+
 }
 
 void ACPlayer::OnMoveForward(float axis)
 {
+	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
+	// Controller 의 yaw 회전값을 저장합니다.
+	FVector direction = FQuat(rotator).GetForwardVector().GetSafeNormal();
+	// Controller 기준의 앞 방향을 1로 정규화된 값으로 저장합니다.
+
+	AddMovementInput(direction, axis);
+	// 캐릭터를 방향으로 이동시킵니다.
 }
 
 void ACPlayer::OnMoveRight(float axis)
 {
+	FRotator rotator = FRotator(0, GetControlRotation().Yaw, 0);
+	FVector direction = FQuat(rotator).GetRightVector().GetSafeNormal();
+	// Controller 기준의 오른쪽 방향을 1로 정규화된 값으로 저장합니다.
+
+	AddMovementInput(direction, axis);
 }
 
 void ACPlayer::OnHorizontalLook(float axis)
-{
-}
+{ AddControllerYawInput(axis); }
 
 void ACPlayer::OnVerticalLook(float axis)
-{
-}
+{ AddControllerPitchInput(axis); }
 
