@@ -48,6 +48,12 @@ void AC02_ComponentOverlap::OnBeginOverlap(UPrimitiveComponent* OverlappedCompon
 
 void AC02_ComponentOverlap::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	FLinearColor color;
+	color.R = UKismetMathLibrary::RandomFloatInRange(0, 1);
+	color.G = UKismetMathLibrary::RandomFloatInRange(0, 1);
+	color.B = UKismetMathLibrary::RandomFloatInRange(0, 1);
+	color.A = 1.0f;
+	PointLight->SetLightColor(color);
 	PointLight->SetVisibility(false);
 }
 
