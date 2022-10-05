@@ -15,6 +15,7 @@ void UPlayerAnim::NativeUpdateAnimation(float DelatSeconds)
 
     if (!Owner) return;
 
+    // GetVelocity() : ¼Ó·Â
     Speed = Owner->GetVelocity().Size2D();
     Direction = CalculateDirection(Owner->GetVelocity(), Owner->GetControlRotation());
 }

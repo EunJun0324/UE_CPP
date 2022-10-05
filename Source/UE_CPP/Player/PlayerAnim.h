@@ -24,6 +24,4 @@ private :
 public :
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DelatSeconds) override;
-
-
 };

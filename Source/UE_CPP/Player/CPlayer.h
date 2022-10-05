@@ -43,4 +43,6 @@ private :
 	void OnHorizontalLook(float axis); 
 	void OnVerticalLook(float axis);
 
+	void Run();
+	void Walk();
 };

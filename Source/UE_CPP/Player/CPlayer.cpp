@@ -57,6 +57,9 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayer::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook",   this, &ACPlayer::OnVerticalLook);
 
+	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Pressed, this, &ACPlayer::Run);
+	PlayerInputComponent->BindAction("Run", EInputEvent::IE_Released,this, &ACPlayer::Walk);
+
 }
 
 void ACPlayer::OnMoveForward(float axis)
@@ -84,4 +87,16 @@ void ACPlayer::OnHorizontalLook(float axis)
 
 void ACPlayer::OnVerticalLook(float axis)
 { AddControllerPitchInput(axis); }
+
+void ACPlayer::Run()
+{
+	// 캐릭터 이동속도를 600으로 설정
+	GetCharacterMovement()->MaxWalkSpeed = 600;
+}
+
+void ACPlayer::Walk()
+{
+	// 캐릭터 이동속도를 400으로 설정
+	GetCharacterMovement()->MaxWalkSpeed = 400;
+}
 
