@@ -15,7 +15,6 @@ AC02_ComponentOverlap::AC02_ComponentOverlap()
 	PointLight = CreateDefaultSubobject<UPointLightComponent>("PointLight");
 	PointLight->SetupAttachment(Root);
 
-
 	Box->SetRelativeScale3D(FVector(3));
 	Box->bHiddenInGame = false;
 
