@@ -40,7 +40,7 @@ AC04_Trigger::AC04_Trigger()
 			Meshes[i]->SetupAttachment(Root);
 			// SetSimulatePhysics : 물리를 가동시킵니다.
 			Meshes[i]->SetSimulatePhysics(true);
-			Meshes[i]->SetRelativeLocation(FVector(0, i * 150, 250));
+			Meshes[i]->SetRelativeLocation(FVector(250, i * 150, 250));
 			Meshes[i]->SetStaticMesh(mesh.Object);
 		}
 	}
@@ -53,7 +53,7 @@ AC04_Trigger::AC04_Trigger()
 		SpotLights[i] = CreateDefaultSubobject<USpotLightComponent>(FName(str));
 		SpotLights[i]->SetupAttachment(Root);
 
-		SpotLights[i]->SetRelativeLocation(FVector(0, i * 150, 250));
+		SpotLights[i]->SetRelativeLocation(FVector(250, i * 150, 250));
 		SpotLights[i]->SetRelativeRotation(FRotator(-90, 0, 0));
 		SpotLights[i]->Intensity = 1e+5f;   // 밝기를 10만으로 설정합니다.
 		SpotLights[i]->OuterConeAngle = 25; // 원뿔의 각도를 25도로 설정합니다.
@@ -64,19 +64,56 @@ void AC04_Trigger::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	Box->OnComponentBeginOverlap.AddDynamic(this, &AC04_Trigger::OnBeginOverlap);
 
+	UMaterialInstanceConstant* material = Cast<UMaterialInstanceConstant>(StaticLoadObject(UMaterialInstanceConstant::StaticClass(), NULL, L"MaterialInstanceConstant'/Game/Materials/M_Mesh_Inst.M_Mesh_Inst'"));
+
+	for (int i = 0; i < 3; ++i)
+	{
+		Materials[i] = UMaterialInstanceDynamic::Create(material, this);
+		Meshes[i]->SetMaterial(0, Materials[i]);
+		Meshes[i]->SetSimulatePhysics(false);
+
+		// GetComponentToWorld : 월드에 존재하는 컴포넌트 좌표계를 가져옵니다.
+		FTransform transform = Meshes[i]->GetComponentToWorld();
+		WorldLocations[i] = transform.GetLocation();
+	}
 }
 
 void AC04_Trigger::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	int32 index = UKismetMathLibrary::RandomIntegerInRange(0, 2);
+	FLinearColor color;
+	color.R = UKismetMathLibrary::RandomFloatInRange(0, 1);
+	color.G = UKismetMathLibrary::RandomFloatInRange(0, 1);
+	color.B = UKismetMathLibrary::RandomFloatInRange(0, 1);
+	color.A = 1.0f;
+
+	OnPhysics(index, color);
+	OnLight(index, color);
 }
 
 void AC04_Trigger::OnPhysics(int32 index, FLinearColor color)
 {
+	for (int i = 0; i < 3; i++)
+	{
+		Materials[i]->SetVectorParameterValue("Color", FLinearColor(1, 1, 1));
+
+		Meshes[i]->SetSimulatePhysics(false);
+		Meshes[i]->SetWorldLocation(WorldLocations[i]);
+	}
+
+	Materials[index]->SetVectorParameterValue("Color", color);
+
+	Meshes[index]->SetSimulatePhysics(true);
 }
 
 void AC04_Trigger::OnLight(int32 index, FLinearColor color)
 {
+	for (int i = 0; i < 3; i++)
+		SpotLights[i]->SetLightColor(FLinearColor(1, 1, 1));
+
+	SpotLights[index]->SetLightColor(color);
 }
 
 
