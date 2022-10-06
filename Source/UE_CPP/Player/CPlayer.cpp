@@ -30,6 +30,13 @@ ACPlayer::ACPlayer()
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
+	// FClassFinder : Class , Blueprint 형식의 에셋을 찾습니다.
+	// Object 가 아닌 Class 로 설정합니다.
+	// 우리가 추가할 에셋은 애니메이션이 아닌 애니메이션 블루프린트이기
+	// 때문에 FClassFinder 형식으로 찾아야합니다.
+	ConstructorHelpers::FClassFinder<UAnimInstance> anim(L"AnimBlueprint'/Game/Player/ABP_Player.ABP_Player_C'");
+	if (anim.Succeeded()) GetMesh()->SetAnimClass(anim.Class);
+
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
 	// SpringArm 의 z 위치를 60 으로 설정합니다.
 	SpringArm->TargetArmLength = 200;
