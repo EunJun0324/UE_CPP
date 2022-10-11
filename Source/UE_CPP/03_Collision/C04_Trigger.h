@@ -4,6 +4,14 @@
 #include "GameFramework/Actor.h"
 #include "C04_Trigger.generated.h"
 
+/*
+	1. CharacterMovementComponent 서술
+	2. StaticMesh 와 SkeletalMesh 차이 서술
+	3. Hit 와 Overlap 충돌 방식에 대하여 서술
+	4. Actor , Pawn , Character Class 차이 서술
+	5. SceneComponent 와 ActorComponent 차이 서술
+*/
+
 UCLASS()
 class UE_CPP_API AC04_Trigger : public AActor
 {
