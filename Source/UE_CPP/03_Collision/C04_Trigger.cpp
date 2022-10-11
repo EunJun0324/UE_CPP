@@ -89,6 +89,14 @@ void AC04_Trigger::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 	color.B = UKismetMathLibrary::RandomFloatInRange(0, 1);
 	color.A = 1.0f;
 
+	// IsBound() : 대리자에게 추가되어 있는 함수가 있는지 확인합니다.
+	//             추가되어 있는 함수가 존재한다면 true 아니라면 false 를 반환합니다.
+	if (OnMultiBeginOverlap.IsBound())
+	{
+		// OnMultiBeginOverlap 에 추가되어 있는 모든 함수를 실행합니다.
+		OnMultiBeginOverlap.Broadcast(index, color);
+	}
+
 	OnPhysics(index, color);
 	OnLight(index, color);
 }

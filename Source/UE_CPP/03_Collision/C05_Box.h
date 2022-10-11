@@ -38,7 +38,8 @@ private:
 			const FHitResult& SweepResult);
 
 private:
-	void OnPhysics(int32 index, FLinearColor color);
+	UFUNCTION()
+		void OnPhysics(int32 index, FLinearColor color);
 
 private:
 	class UMaterialInstanceDynamic* Materials[3];

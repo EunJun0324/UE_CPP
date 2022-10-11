@@ -4,13 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "C04_Trigger.generated.h"
 
-/*
-	1. CharacterMovementComponent 서술
-	2. StaticMesh 와 SkeletalMesh 차이 서술
-	3. Hit 와 Overlap 충돌 방식에 대하여 서술
-	4. Actor , Pawn , Character Class 차이 서술
-	5. SceneComponent 와 ActorComponent 차이 서술
-*/
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiBeginOverlapSignature, int32, FLinearColor);
 
 UCLASS()
 class UE_CPP_API AC04_Trigger : public AActor
@@ -58,4 +52,7 @@ private :
 private :
 	class UMaterialInstanceDynamic* Materials[3];
 	FVector WorldLocations[3];	// 초기에 설정되어 있던 상자들의 위치값 저장 변수
+
+public :
+	FMultiBeginOverlapSignature OnMultiBeginOverlap;
 };
