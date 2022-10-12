@@ -38,7 +38,6 @@ private:
 			const FHitResult& SweepResult);
 
 private:
-	void OnLight(int32 index, FLinearColor color);
-
-
+	UFUNCTION()
+		void OnLight(int32 index, FLinearColor color);
 };

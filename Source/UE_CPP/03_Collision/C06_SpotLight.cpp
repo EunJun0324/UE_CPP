@@ -4,6 +4,9 @@
 #include "Components/TextRenderComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/SpotLightComponent.h"
+#include "Kismet/GameplayStatics.h" 
+#include "C04_Trigger.h"
+
 
 AC06_SpotLight::AC06_SpotLight()
 {
@@ -42,6 +45,16 @@ AC06_SpotLight::AC06_SpotLight()
 void AC06_SpotLight::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TArray<AActor*> actors;
+
+	UGameplayStatics::GetAllActorsOfClass(
+		GetWorld(),
+		AC04_Trigger::StaticClass(), actors);
+
+	AC04_Trigger* trigger = Cast<AC04_Trigger>(actors[0]);
+
+	trigger->OnMultiBeginOverlap.AddUFunction(this, "OnLight");
 	
 	Box->OnComponentBeginOverlap.AddDynamic(this, &AC06_SpotLight::OnBeginOverlap);
 }
