@@ -62,6 +62,6 @@ void AC01_LineTrace::StartJump(AActor* InActor)
 {
 	ACPlayer* player = Cast<ACPlayer>(InActor);
 	if (player)
-		player->LaunchCharacter(FVector(0, 0, 200), true, true);
+		player->LaunchCharacter(FVector(0, 0, 700), true, true);
 }
 
