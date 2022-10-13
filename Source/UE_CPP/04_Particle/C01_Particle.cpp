@@ -66,7 +66,7 @@ void AC01_Particle::ActorBeginOverlap(AActor* OverlappedActor, AActor* OtherActo
 				mesh->AddRadialImpulse(
 					location,	// 폭발할 위치
 					1000,		// 폭발할 범위
-					500000.0f,  // 폭발할 힘의 크기
+					50000.0f,  // 폭발할 힘의 크기
 					ERadialImpulseFalloff::RIF_MAX); // 폭발 기원으로부터의 강도 세기
 			// AddRadialImpulse : 충격을 가하는 기능
 		}
