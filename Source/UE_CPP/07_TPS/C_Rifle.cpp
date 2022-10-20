@@ -74,12 +74,19 @@ void AC_Rifle::BeginPlay()
 	// 소유주의 메시의 HolsterSocket 에 해당 액터를 
 	// 상대 트랜스폼을 유지한 채 장착합니다.
 	AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocket);
+
+	OnTimelineFloat.BindUFunction(this, "Zooming");
+	Timeline.AddInterpFloat(Curve, OnTimelineFloat);
+	Timeline.SetPlayRate(200);
 }
 
 void AC_Rifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Timeline.TickTimeline(DeltaTime);
+
+	if (!bAiming) return;
 }
 
 AC_Rifle* AC_Rifle::Spawn(UWorld* InWorld, ACharacter* InOwner)
@@ -93,15 +100,13 @@ AC_Rifle* AC_Rifle::Spawn(UWorld* InWorld, ACharacter* InOwner)
 
 void AC_Rifle::Zooming(float Output)
 {
+	UCameraComponent* camera = Cast<UCameraComponent>(Owner->GetComponentByClass(UCameraComponent::StaticClass()));
+	camera->FieldOfView = Output;
 }
 
 void AC_Rifle::Firing()
 {
-}
 
-bool AC_Rifle::IsAvalibaleAim()
-{
-	return false;
 }
 
 void AC_Rifle::Equip()
@@ -150,26 +155,89 @@ void AC_Rifle::Begin_UnEquip()
 }
 
 void AC_Rifle::End_UnEquip()
+{ bEquipping = false; }
+
+bool AC_Rifle::IsAvalibaleAim()
 {
-	bEquipping = false;
+	USpringArmComponent* springArm = Cast<USpringArmComponent>(Owner->GetComponentByClass(USpringArmComponent::StaticClass()));
+	UCameraComponent*       camera = Cast<UCameraComponent>   (Owner->GetComponentByClass(UCameraComponent::StaticClass()));
+
+	APlayerController* controller = Owner->GetController<APlayerController>();
+
+	return springArm && camera && controller;
 }
 
 void AC_Rifle::Begin_Aim()
 {
+	if (!bEquipped) return;
+	if (bEquipping) return;
+	if (!IsAvalibaleAim()) return;
+
+	bAiming = true;
+
+	// controller 의 z 회전값을 사용합니다.
+	Owner->bUseControllerRotationYaw = true;
+	// 캐릭터의 이동 방향에 따라 회전하지 않습니다.
+	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	USpringArmComponent* springArm = Cast<USpringArmComponent>(Owner->GetComponentByClass(USpringArmComponent::StaticClass()));
+
+	springArm->TargetArmLength = 100;
+	springArm->SocketOffset = FVector(0, 30, 10);
+
+	Timeline.PlayFromStart();
+
+	Owner->GetController<APlayerController>()->GetHUD<ACHUD>()->Visible();
 }
 
 void AC_Rifle::End_Aim()
 {
+	if (!bAiming) return;
+
+	bAiming = false;
+
+	Owner->bUseControllerRotationYaw = false;
+	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	USpringArmComponent* springArm = Cast<USpringArmComponent>(Owner->GetComponentByClass(USpringArmComponent::StaticClass()));
+
+	springArm->TargetArmLength = 200;
+	springArm->SocketOffset = FVector(0, 60, 0);
+
+	Timeline.ReverseFromEnd();
+
+	Owner->GetController<APlayerController>()->GetHUD<ACHUD>()->InVisible();
 }
 
 void AC_Rifle::Begin_Fire()
 {
+	if (!bEquipped) return;
+	if (bEquipping) return;
+	if (!bAiming)   return;
+	if (bFiring)    return;
+
+	bFiring = true;
+
+	// 만약 연사 상태라면
+	if (bAutoFiring)
+	{
+		// 키를 뗄 때까지 Firing 을 0.1초마다 실행하도록 설정합니다.
+		GetWorld()->GetTimerManager().SetTimer(AutoFireHandle, this,
+			&AC_Rifle::Firing, 0.1, true, 0);
+
+		return;
+	}
+	Firing();
 }
 
 void AC_Rifle::End_Fire()
 {
+	bFiring = false;
+
+	if (bAutoFiring)
+		GetWorld()->GetTimerManager().ClearTimer(AutoFireHandle);
 }
 
 void AC_Rifle::ToggleAutoFire()
-{
-}
+{ if (!bFiring) bAutoFiring = !bAutoFiring; }
+
