@@ -35,10 +35,10 @@ AC_Rifle::AC_Rifle()
 	if (mesh.Succeeded()) Mesh->SetSkeletalMesh(mesh.Object);
 
 	ConstructorHelpers::FObjectFinder<UAnimMontage> grabMontage(L"AnimMontage'/Game/Character/Animations/Rifle/Rifle_Grab_Montage.Rifle_Grab_Montage'");
-	if (grabMontage.Succeeded()) GrapMontage = grabMontage.Object;
+	if (grabMontage.Succeeded()) GrabMontage = grabMontage.Object;
 
 	ConstructorHelpers::FObjectFinder<UAnimMontage> unGrabMontage(L"AnimMontage'/Game/Character/Animations/Rifle/Rifle_UnGrab_Montage.Rifle_UnGrab_Montage'");
-	if (unGrabMontage.Succeeded()) UnGrapMontage = unGrabMontage.Object;
+	if (unGrabMontage.Succeeded()) UnGrabMontage = unGrabMontage.Object;
 
 	ConstructorHelpers::FObjectFinder<UCurveFloat> curve(L"CurveFloat'/Game/Blueprints/07_TPS/Curve_Aim.Curve_Aim'");
 	if (curve.Succeeded()) Curve = curve.Object;
@@ -69,6 +69,11 @@ void AC_Rifle::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// 소유주를 저장합니다.
+	Owner = Cast<ACharacter>(GetOwner());
+	// 소유주의 메시의 HolsterSocket 에 해당 액터를 
+	// 상대 트랜스폼을 유지한 채 장착합니다.
+	AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), HolsterSocket);
 }
 
 void AC_Rifle::Tick(float DeltaTime)
@@ -79,7 +84,11 @@ void AC_Rifle::Tick(float DeltaTime)
 
 AC_Rifle* AC_Rifle::Spawn(UWorld* InWorld, ACharacter* InOwner)
 {
-	return nullptr;
+	FActorSpawnParameters params; // 액터 스폰에 대한 매개변수 목록입니다.
+	params.Owner = InOwner; // 매개변수로 들어온 InOwner 를 소유주로 설정합니다.
+
+	// 매개변수로 들어온 InWorld 에 AC_Rifle 을 생성하고 주소값을 반환합니다.
+	return InWorld->SpawnActor<AC_Rifle>(params);
 }
 
 void AC_Rifle::Zooming(float Output)
@@ -97,26 +106,52 @@ bool AC_Rifle::IsAvalibaleAim()
 
 void AC_Rifle::Equip()
 {
+	// 장착하고 있는 도중이라면 함수를 종료합니다.
+	if (bEquipping) return;
+
+	// 장착하는 있는 도중이라고 체크합니다.
+	bEquipping = true;
+	
+	// 장착중인 상태였다면
+	if (bEquipped == true)
+	{
+		// 장착 해제를 실행합니다.
+		UnEquip();
+		return;
+	}
+
+	// GrabMontage 를 2배 속도로 재생합니다.
+	Owner->PlayAnimMontage(GrabMontage, 2);
 }
 
 void AC_Rifle::Begin_Equip()
 {
+	bEquipped = true;
+
+	AttachToComponent(Owner->GetMesh(),
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		HandSocket);
 }
 
 void AC_Rifle::End_Equip()
-{
-}
+{ bEquipping = false; }
 
 void AC_Rifle::UnEquip()
 {
+	Owner->PlayAnimMontage(UnGrabMontage, 2);
 }
 
 void AC_Rifle::Begin_UnEquip()
 {
+	AttachToComponent(Owner->GetMesh(),
+		FAttachmentTransformRules(EAttachmentRule::KeepRelative, true),
+		HolsterSocket);
+	bEquipped = false;
 }
 
 void AC_Rifle::End_UnEquip()
 {
+	bEquipping = false;
 }
 
 void AC_Rifle::Begin_Aim()

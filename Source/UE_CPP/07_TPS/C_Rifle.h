@@ -17,9 +17,9 @@ private :
 		FName HandSocket    = "Hand_Rifle";
 
 	UPROPERTY(EditDefaultsOnly, Category = "Socket")
-		class UAnimMontage* GrapMontage;
+		class UAnimMontage* GrabMontage;
 	UPROPERTY(EditDefaultsOnly, Category = "Socket")
-		class UAnimMontage* UnGrapMontage;
+		class UAnimMontage* UnGrabMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Aim")
 		class UCurveFloat* Curve; // 에임 전환 속도
