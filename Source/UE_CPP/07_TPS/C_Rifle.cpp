@@ -87,6 +87,35 @@ void AC_Rifle::Tick(float DeltaTime)
 	Timeline.TickTimeline(DeltaTime);
 
 	if (!bAiming) return;
+
+	UCameraComponent* camera = Cast<UCameraComponent>(Owner->GetComponentByClass(UCameraComponent::StaticClass()));
+
+	// 카메라의 앞 방향을 가져옵니다.
+	FVector direction = camera->GetForwardVector();
+	// 카메라의 월드 트랜스폼을 가져옵니다.
+	FTransform transform = camera->GetComponentToWorld();
+	// 카메라의 현재 위치의 앞방향을 저장합니다.
+	FVector start = transform.GetLocation() + direction;
+	// start 의 위치에서 AimDistance 거리를 끝 지점으로 저장합니다.
+	FVector end = transform.GetLocation() + direction * AimDistance;
+
+	ACHUD* hud = Owner->GetController<APlayerController>()->GetHUD<ACHUD>();
+
+	// 라인 트레이스에 감지될 물체중 Player 는 감지되지 않도록 저장합니다.
+	TArray<AActor*> ignoreActors;
+	ignoreActors.Add(Owner);
+
+	// 감지된 결과를 저장할 hitResult 를 선언합니다.
+	FHitResult hitResult;
+
+	UKismetSystemLibrary::LineTraceSingle(
+		GetWorld(), start, end, ETraceTypeQuery::TraceTypeQuery3,
+		false, ignoreActors, EDrawDebugTrace::None, hitResult, true);
+
+	// bBlockingHit : 물리충돌을 감지했는지 검사여부
+	//                물리 객체에 충돌했는지에 대한 여부  
+	if (hitResult.bBlockingHit) hud->EnableTarget();
+	else                        hud->DisableTarget();
 }
 
 AC_Rifle* AC_Rifle::Spawn(UWorld* InWorld, ACharacter* InOwner)
@@ -106,7 +135,84 @@ void AC_Rifle::Zooming(float Output)
 
 void AC_Rifle::Firing()
 {
+	FVector direction, start, end;
 
+	// 카메라 쉐이크
+	if (IsAvalibaleAim())
+	{
+		UCameraComponent* camera = Cast<UCameraComponent>(Owner->GetComponentByClass(UCameraComponent::StaticClass()));
+
+		direction = camera->GetForwardVector();
+		FTransform transform = camera->GetComponentToWorld();
+		start = transform.GetLocation() + direction;
+		end   = transform.GetLocation() + direction * AimDistance;
+
+		direction = UKismetMathLibrary::RandomUnitVectorInConeInDegrees(direction, 0.2f);
+
+		APlayerController* controller = Owner->GetController<APlayerController>();
+
+		if (CameraShake) controller->PlayerCameraManager->StartCameraShake(CameraShake);
+	}
+	// 사운드
+	FVector muzzleLocation = Mesh->GetSocketLocation("MuzzleFlash");
+	{
+		if (MuzzleSoundCue)
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), MuzzleSoundCue, muzzleLocation);
+	}
+	// 파티클
+	{
+		if (FlashParticle)
+			UGameplayStatics::SpawnEmitterAttached(FlashParticle, Mesh, "MuzzleFlash", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
+		if (EjectParticle)
+			UGameplayStatics::SpawnEmitterAttached(EjectParticle, Mesh, "EjectBullet", FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
+	}
+	// 불렛생성
+	if (BulletClass)
+	{
+		FVector spawnLocation = muzzleLocation + direction * 100;
+		AC_Bullet* bullet = GetWorld()->SpawnActor<AC_Bullet>(
+			BulletClass, spawnLocation, direction.Rotation());
+		bullet->Shoot(direction);
+	}
+	// 충돌처리 
+
+	PitchAngle -= 0.25 * GetWorld()->DeltaTimeSeconds;
+	Owner->AddControllerPitchInput(PitchAngle);
+
+	TArray<AActor*> ignoreActors;
+	ignoreActors.Add(Owner);
+
+	FHitResult hitResult;
+
+	UKismetSystemLibrary::LineTraceSingle(
+		GetWorld(), start, end, ETraceTypeQuery::TraceTypeQuery1,
+		false, ignoreActors, EDrawDebugTrace::None, hitResult, true);
+
+	if (hitResult.bBlockingHit)
+	{
+		FRotator rotator = hitResult.ImpactNormal.Rotation();
+		UGameplayStatics::SpawnEmitterAtLocation
+		(GetWorld(), ImpactParticle, hitResult.Location, rotator);
+
+		UDecalComponent* decal = UGameplayStatics::SpawnDecalAtLocation(
+			GetWorld(), ImpactDecal, FVector(5), hitResult.Location, rotator, 10);
+		decal->SetFadeScreenSize(0);
+
+		UStaticMeshComponent* mesh = 
+			Cast<UStaticMeshComponent>(hitResult.GetActor()->GetRootComponent());
+
+		if (mesh && mesh->BodyInstance.bSimulatePhysics)
+		{
+			direction = hitResult.GetActor()->GetActorLocation() -
+				Owner->GetActorLocation();
+
+			direction.Normalize();
+
+			mesh->AddImpulseAtLocation(
+				direction * 300 * mesh->GetMass(), Owner->GetActorLocation());
+		}
+
+	}
 }
 
 void AC_Rifle::Equip()

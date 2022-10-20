@@ -17,7 +17,7 @@ AC_Bullet::AC_Bullet()
 	Capsule->SetCollisionProfileName("BlockAllDynamic");
 	// Overlap 이 아닌 물리적 즉 Hit 충돌을 감지하도록 설정합니다.
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(L"StaticMesh'/Game/Particles_Rifle/Meshes/SM_BulletCasing.SM_BulletCasing'");
+	ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(L"StaticMesh'/Game/Mesh/SM_Sphere.SM_Sphere'");
 	if (mesh.Succeeded()) Mesh->SetStaticMesh(mesh.Object);
 	ConstructorHelpers::FObjectFinder<UMaterialInstanceConstant> material(L"MaterialInstanceConstant'/Game/Materials/M_Bullet_Inst.M_Bullet_Inst'");
 	if (material.Succeeded()) Mesh->SetMaterial(0, material.Object);
