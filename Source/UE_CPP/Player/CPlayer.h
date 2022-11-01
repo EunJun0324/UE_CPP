@@ -38,6 +38,10 @@ private:
 		class UCameraComponent* Camera;
 	// Player 를 보여줄 수 있도록 Camera 를 추가합니다.
 
+public :
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+		class USkillComponent* Skill;
+
 private :
 	class AC_Rifle* Rifle;
 	class UC_UserWidget* AutoFire;
@@ -73,6 +77,8 @@ private :
 
 	void OnAutoFire();
 
+	void OnSkill();
+
 private :
 	virtual void Begin_Equip_Rifle()   override;
 	virtual void End_Equip_Rifle()     override;
@@ -80,4 +86,8 @@ private :
 	virtual void End_UnEquip_Rifle()   override;
 	virtual bool Get_Equip_Rifle()     override;
 	virtual bool Get_Aim_Rifle()       override;
+
+public :
+	__forceinline AC_Rifle* GetRifle() const
+	{ return Rifle; }
 };

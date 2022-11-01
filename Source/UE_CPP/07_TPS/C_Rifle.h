@@ -116,4 +116,7 @@ public :
 	FORCEINLINE bool GetEquipped() { return bEquipped;   }
 	FORCEINLINE bool GetAiming()   { return bAiming;    }
 	FORCEINLINE bool GetAutoFire() { return bAutoFiring; }
+
+	FORCEINLINE USkeletalMeshComponent* GetMesh() { return Mesh; }
+
 };

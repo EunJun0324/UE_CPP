@@ -2,6 +2,8 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 
@@ -142,7 +144,7 @@ ASkill::ASkill()
 void ASkill::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetLifeSpan(0.5f);
 }
 
 void ASkill::Tick(float DeltaTime)

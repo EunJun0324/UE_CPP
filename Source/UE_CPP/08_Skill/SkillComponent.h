@@ -10,12 +10,25 @@ class UE_CPP_API USkillComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+private :
+	UPROPERTY(EditAnywhere)
+		class UAnimMontage* SkillMontage;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ASkill> Skill;
+
+private :
+	class ACPlayer* owner;
+
 public:	
 	USkillComponent();
-
+	
 protected:
 	virtual void BeginPlay() override;
 
-public:	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public :
+	void OnSkill();
+
+	UFUNCTION(BlueprintCallable)
+	void Begin_Skill();
 };

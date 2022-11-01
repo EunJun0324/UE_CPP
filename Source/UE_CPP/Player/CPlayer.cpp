@@ -13,6 +13,8 @@
 #include "07_TPS/C_Rifle.h"
 #include "07_TPS/C_UserWidget.h"
 
+#include "08_Skill/SkillComponent.h"
+
 
 
 ACPlayer::ACPlayer()
@@ -55,6 +57,8 @@ ACPlayer::ACPlayer()
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	// 해당 캐릭터가 플레이어라는 것을 설정합니다.
+
+	Skill = CreateDefaultSubobject<USkillComponent>("Skill");
 }
 
 void ACPlayer::BeginPlay()
@@ -86,7 +90,7 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fire",     EInputEvent::IE_Released, this, &ACPlayer::OffFire);
 	PlayerInputComponent->BindAction("AutoFire", EInputEvent::IE_Pressed,  this, &ACPlayer::OnAutoFire);
 
-
+	PlayerInputComponent->BindAction("Skill", EInputEvent::IE_Pressed, this, &ACPlayer::OnSkill);
 }
 
 void ACPlayer::OnMoveForward(float axis)
@@ -153,6 +157,12 @@ void ACPlayer::OnAutoFire()
 {
 	Rifle->ToggleAutoFire();
 	Rifle->GetAutoFire() ? AutoFire->On() : AutoFire->Off();
+}
+
+void ACPlayer::OnSkill()
+{ 
+	if (Get_Equip_Rifle() && !Get_Aim_Rifle())
+		Skill->OnSkill(); 
 }
 
 void ACPlayer::Begin_Equip_Rifle()

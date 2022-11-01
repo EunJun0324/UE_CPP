@@ -9,7 +9,7 @@ class UE_CPP_API ASkill : public AActor
 {
 	GENERATED_BODY()
 	
-protected :
+public :
 	UPROPERTY(EditAnywhere)
 		class UFXSystemAsset* ActionEffect;
 
