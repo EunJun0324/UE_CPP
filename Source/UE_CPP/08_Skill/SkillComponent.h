@@ -12,10 +12,10 @@ class UE_CPP_API USkillComponent : public UActorComponent
 
 private :
 	UPROPERTY(EditAnywhere)
-		class UAnimMontage* SkillMontage;
+		class UAnimMontage* DestorySkillMontage;
 
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class ASkill> Skill;
+		TSubclassOf<class ASkill> DestorySkill;
 
 private :
 	class ACPlayer* owner;
@@ -27,8 +27,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public :
-	void OnSkill();
+	void OnDestorySkill();
 
-	UFUNCTION(BlueprintCallable)
-	void Begin_Skill();
+	UFUNCTION()
+	void Begin_DestorySkill();
 };

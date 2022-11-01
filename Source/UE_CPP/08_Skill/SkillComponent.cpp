@@ -18,17 +18,15 @@ void USkillComponent::BeginPlay()
 	owner = Cast<ACPlayer>(GetOwner());
 }
 
-void USkillComponent::OnSkill()
+void USkillComponent::OnDestorySkill()
 { 
-	owner->PlayAnimMontage(SkillMontage); 
+	owner->PlayAnimMontage(DestorySkillMontage);
 }
 
-void USkillComponent::Begin_Skill()
+void USkillComponent::Begin_DestorySkill()
 {
 	FTransform transform = owner->GetMesh()->GetSocketTransform("EjectBullet");
-
-	ASkill* skill = owner->GetWorld()->SpawnActorDeferred<ASkill>(Skill, transform ,owner);
-	skill->ActionPlayEffect(owner->GetWorld(), owner);
+	ASkill* skill = owner->GetWorld()->SpawnActorDeferred<ASkill>(DestorySkill, transform ,owner);
 	UGameplayStatics::FinishSpawningActor(skill, transform);
 }
 

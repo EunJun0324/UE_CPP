@@ -24,7 +24,7 @@ void USkillNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* A
 	{
 		if (component->GetName() == "Skill")
 		{
-			component->Begin_Skill();
+			component->Begin_DestorySkill();
 			return;
 		}
 	}

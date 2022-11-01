@@ -162,7 +162,7 @@ void ACPlayer::OnAutoFire()
 void ACPlayer::OnSkill()
 { 
 	if (Get_Equip_Rifle() && !Get_Aim_Rifle())
-		Skill->OnSkill(); 
+		Skill->OnDestorySkill(); 
 }
 
 void ACPlayer::Begin_Equip_Rifle()
