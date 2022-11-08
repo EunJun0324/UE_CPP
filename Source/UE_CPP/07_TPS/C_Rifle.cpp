@@ -212,6 +212,7 @@ void AC_Rifle::Firing()
 				direction * 300 * mesh->GetMass(), Owner->GetActorLocation());
 		}
 
+		// ╣╔╧лаЖ
 	}
 }
 
