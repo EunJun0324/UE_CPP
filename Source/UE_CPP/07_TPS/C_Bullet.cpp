@@ -3,6 +3,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Gameframework/ProjectileMovementComponent.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "09_AI/AICharacter.h"
 
 
 AC_Bullet::AC_Bullet()
@@ -41,6 +42,11 @@ void AC_Bullet::BeginPlay()
 
 void AC_Bullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpuluse, const FHitResult& Hit)
 {
+	if (Cast<AAICharacter>(OtherActor))
+	{
+		FDamageEvent e;
+		OtherActor->TakeDamage(10.0f, e, GetWorld()->GetFirstPlayerController(), this);
+	}
 	Destroy(); // ÇØ´ç °´Ã¼¸¦ ÆÄ±«ÇÕ´Ï´Ù.
 }
 

@@ -22,11 +22,27 @@ AAICharacter::AAICharacter()
 	AIWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
+float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventIstigator, AActor* DamgeCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventIstigator, DamgeCauser);
+
+	Hp -= DamageAmount;
+
+	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateHealth(Hp, MaxHp);
+
+	return DamageAmount;
+}
+
 void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
 	Weapon = AAIWeapon::Spawn(GetWorld(), this);
 	AIWidget->InitWidget();
+
+	Hp = MaxHp;
+
+	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateHealth(Hp, MaxHp);
+	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateCharacterName(Name);
 }
 

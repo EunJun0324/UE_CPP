@@ -22,7 +22,6 @@ AAIArrow::AAIArrow()
 	Projectile->InitialSpeed = 700; 
 	Projectile->MaxSpeed = 700;     
 	Projectile->ProjectileGravityScale = 0;
-
 }
 
 void AAIArrow::BeginPlay()

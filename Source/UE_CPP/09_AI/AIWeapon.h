@@ -16,8 +16,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Fire")
 		TSubclassOf<class AAIArrow> ArrowClass;
 
-
-
 private:
 	class ACharacter* Owner;
 

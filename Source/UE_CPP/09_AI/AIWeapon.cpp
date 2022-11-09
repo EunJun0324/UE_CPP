@@ -20,18 +20,15 @@ void AAIWeapon::BeginPlay()
 	Super::BeginPlay();
 	
 	Owner = Cast<ACharacter>(GetOwner());
-	// 소유주의 메시의 HolsterSocket 에 해당 액터를 
-	// 상대 트랜스폼을 유지한 채 장착합니다.
 	AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), L"WeaponSocket");
 }
 
 
 AAIWeapon* AAIWeapon::Spawn(UWorld* InWorld, ACharacter* InOwner)
 {
-	FActorSpawnParameters params; // 액터 스폰에 대한 매개변수 목록입니다.
-	params.Owner = InOwner; // 매개변수로 들어온 InOwner 를 소유주로 설정합니다.
+	FActorSpawnParameters params; 
+	params.Owner = InOwner; 
 
-	// 매개변수로 들어온 InWorld 에 AC_Rifle 을 생성하고 주소값을 반환합니다.
 	return InWorld->SpawnActor<AAIWeapon>(params);
 }
 
