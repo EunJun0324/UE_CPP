@@ -9,6 +9,13 @@ class UE_CPP_API AAICharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+private :
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		class UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+		uint8 TeamID = 2;
+
 protected :
 	UPROPERTY(VisibleDefaultsOnly)
 		class UWidgetComponent* AIWidget;
@@ -38,4 +45,7 @@ public :
 protected:
 	virtual void BeginPlay() override;
 
+public :
+	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
+	FORCEINLINE               uint8  GetTeamID()       { return TeamID;       }
 };

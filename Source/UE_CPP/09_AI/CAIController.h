@@ -4,6 +4,12 @@
 #include "AIController.h"
 #include "CAIController.generated.h"
 
+UENUM(BlueprintType)
+enum class EBehaviorType : uint8
+{
+	Wait, Attack, Hitted, Approach, Max,
+};
+
 UCLASS()
 class UE_CPP_API ACAIController : public AAIController
 {
@@ -25,6 +31,9 @@ protected :
 private :
 	UFUNCTION()
 		void OnPerceptiongUpdated(const TArray<AActor*>& UpdateActors);
+
+public :
+	void ChanageType(EBehaviorType InType);
 
 private :
 	class AAICharacter* Owner;

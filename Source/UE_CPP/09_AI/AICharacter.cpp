@@ -30,6 +30,12 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateHealth(Hp, MaxHp);
 
+	if (Hp <= 0)
+	{
+		Hp = 0.0f;
+		GetMesh()->SetSimulatePhysics(true);
+	}
+
 	return DamageAmount;
 }
 

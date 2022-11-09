@@ -3,10 +3,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "07_TPS/IRifle.h"
+#include "GenericTeamAgentInterface.h"
 #include "CPlayer.generated.h"
 
 UCLASS()
-class UE_CPP_API ACPlayer : public ACharacter, public IIRifle
+class UE_CPP_API ACPlayer : public ACharacter, public IIRifle, public IGenericTeamAgentInterface
 {
 	// ACharacter  
 	// SkeltealMeshComponent : 뼈대 메쉬 기능
@@ -27,6 +28,9 @@ private :
 
 	UPROPERTY(EditDefaultsOnly, Category = "Zoom")
 		FVector2D ZoomRange = FVector2D(0, 500);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+		uint8 TeamId = 1;
 
 private:
 	UPROPERTY(VisibleDefaultsOnly)
