@@ -1,4 +1,6 @@
 #include "09_AI/AICharacter.h"
+#include "Components/WidgetComponent.h"
+#include "AIWidget.h"
 #include "AIWeapon.h"
 
 AAICharacter::AAICharacter()
@@ -10,6 +12,14 @@ AAICharacter::AAICharacter()
 
 	ConstructorHelpers::FClassFinder<UAnimInstance> anim(L"AnimBlueprint'/Game/Blueprints/09_AI/ABP_AI.ABP_AI_C'");
 	GetMesh()->SetAnimClass(anim.Class);
+
+	ConstructorHelpers::FClassFinder<UAIWidget> widget(L"WidgetBlueprint'/Game/Blueprints/09_AI/BP_AIWidget.BP_AIWidget_C'");
+	AIWidget = CreateDefaultSubobject<UWidgetComponent>("AIWigdet");
+	AIWidget->SetupAttachment(GetMesh());
+	AIWidget->SetWidgetClass(widget.Class);
+	AIWidget->SetRelativeLocation(FVector(0, 0, 200));
+	AIWidget->SetDrawSize(FVector2D(200, 50));
+	AIWidget->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AAICharacter::BeginPlay()
@@ -17,7 +27,6 @@ void AAICharacter::BeginPlay()
 	Super::BeginPlay();
 
 	Weapon = AAIWeapon::Spawn(GetWorld(), this);
+	AIWidget->InitWidget();
 }
-
-
 

@@ -9,6 +9,10 @@ class UE_CPP_API AAICharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected :
+	UPROPERTY(VisibleDefaultsOnly)
+		class UWidgetComponent* AIWidget;
+
 private :
 	class AAIWeapon* Weapon;
 
@@ -17,4 +21,5 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
 };

@@ -13,6 +13,11 @@ private:
 	UPROPERTY(VisibleDefaultsOnly)
 		class USkeletalMeshComponent* Mesh;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Fire")
+		TSubclassOf<class AAIArrow> ArrowClass;
+
+
+
 private:
 	class ACharacter* Owner;
 
@@ -24,4 +29,8 @@ protected:
 
 public :
 	static AAIWeapon* Spawn(UWorld* InWorld, ACharacter* InOwner);
+
+public :
+	void Begin_Fire();
+	void   End_Fire();
 };

@@ -1,6 +1,7 @@
 #include "09_AI/AIWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Character.h"
+#include "AIArrow.h"
 
 
 AAIWeapon::AAIWeapon()
@@ -9,6 +10,9 @@ AAIWeapon::AAIWeapon()
 
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> mesh(L"SkeletalMesh'/Game/Skeleton_archer/mesh/weapon/SK_bow.SK_bow'");
 	if (mesh.Succeeded()) Mesh->SetSkeletalMesh(mesh.Object);
+
+	ConstructorHelpers::FClassFinder<AAIArrow> aiArrow(L"Blueprint'/Game/Blueprints/09_AI/BP_AIArrow.BP_AIArrow_C'");
+	if (aiArrow.Succeeded()) ArrowClass = aiArrow.Class;
 }
 
 void AAIWeapon::BeginPlay()
@@ -29,4 +33,21 @@ AAIWeapon* AAIWeapon::Spawn(UWorld* InWorld, ACharacter* InOwner)
 
 	// 매개변수로 들어온 InWorld 에 AC_Rifle 을 생성하고 주소값을 반환합니다.
 	return InWorld->SpawnActor<AAIWeapon>(params);
+}
+
+void AAIWeapon::Begin_Fire()
+{
+	if (ArrowClass)
+	{
+		FVector arrowLocation = Mesh->GetSocketLocation("Fire");
+		FVector spawnLocation = arrowLocation + Owner->GetActorForwardVector();
+		FRotator spawnRotation = Owner->GetActorRotation() + FRotator(0, 180, 0);
+		AAIArrow* arrow = GetWorld()->SpawnActor<AAIArrow>(
+			ArrowClass, arrowLocation, spawnRotation);
+		arrow->Shoot(Owner->GetActorForwardVector());
+	}
+}
+
+void AAIWeapon::End_Fire()
+{
 }
