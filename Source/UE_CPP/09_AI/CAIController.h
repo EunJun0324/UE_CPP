@@ -35,6 +35,8 @@ private :
 public :
 	void ChanageType(EBehaviorType InType);
 
+	class ACPlayer* GetTargetPlayer();
+
 private :
 	class AAICharacter* Owner;
 	class UAISenseConfig_Sight* SightSense;

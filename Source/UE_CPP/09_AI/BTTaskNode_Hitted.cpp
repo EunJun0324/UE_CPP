@@ -15,6 +15,8 @@ EBTNodeResult::Type UBTTaskNode_Hitted::ExecuteTask(UBehaviorTreeComponent& Owne
     ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
     AAICharacter* ai = Cast<AAICharacter>(controller->GetPawn());
 
+    controller->StopMovement();
+
     return EBTNodeResult::InProgress;
 }
 
@@ -24,4 +26,7 @@ void UBTTaskNode_Hitted::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
     ACAIController* controller = Cast<ACAIController>(OwnerComp.GetOwner());
     AAICharacter* ai = Cast<AAICharacter>(controller->GetPawn());
+
+    if (!ai->GetIsHitted())
+        FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 }

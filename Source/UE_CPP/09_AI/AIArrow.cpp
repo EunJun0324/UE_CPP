@@ -19,8 +19,8 @@ AAIArrow::AAIArrow()
 	Mesh->SetupAttachment(Capsule);
 	Mesh->SetRelativeLocation(FVector(0, 0, -25.f));
 
-	Projectile->InitialSpeed = 700; 
-	Projectile->MaxSpeed = 700;     
+	Projectile->InitialSpeed = 1000; 
+	Projectile->MaxSpeed = 1000;     
 	Projectile->ProjectileGravityScale = 0;
 }
 

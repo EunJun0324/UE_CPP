@@ -16,6 +16,9 @@ private :
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 		uint8 TeamID = 2;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+		class UAnimMontage* Montages[3];
+
 protected :
 	UPROPERTY(VisibleDefaultsOnly)
 		class UWidgetComponent* AIWidget;
@@ -28,6 +31,8 @@ protected :
 	
 	float Hp;
 
+	bool bHitted = false;
+	bool bAttack = false;
 
 private :
 	class AAIWeapon* Weapon;
@@ -48,4 +53,16 @@ protected:
 public :
 	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
 	FORCEINLINE               uint8  GetTeamID()       { return TeamID;       }
+	
+	FORCEINLINE bool GetIsHitted() { return bHitted;  }
+	FORCEINLINE void EndHitted()   { bHitted = false; }
+	FORCEINLINE bool GetIsAttack() { return bAttack;  }
+	FORCEINLINE void EndAttack()   { bAttack = false; }
+
+
+public :
+	void Attack();
+	void Hitted();
+
+	void ShootArrow();
 };

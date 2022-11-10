@@ -26,15 +26,13 @@ float AAICharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventIstigator, DamgeCauser);
 
+	bHitted = true;
+
 	Hp -= DamageAmount;
 
 	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateHealth(Hp, MaxHp);
 
-	if (Hp <= 0)
-	{
-		Hp = 0.0f;
-		GetMesh()->SetSimulatePhysics(true);
-	}
+	Hitted();
 
 	return DamageAmount;
 }
@@ -50,5 +48,27 @@ void AAICharacter::BeginPlay()
 
 	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateHealth(Hp, MaxHp);
 	Cast<UAIWidget>(AIWidget->GetUserWidgetObject())->UpdateCharacterName(Name);
+}
+
+void AAICharacter::Attack()
+{ 
+	bAttack = true;
+	PlayAnimMontage(Montages[0]); 
+}
+
+void AAICharacter::Hitted()
+{
+	if (Hp <= 0)
+	{
+		PlayAnimMontage(Montages[1]);
+		return;
+	}
+	PlayAnimMontage(Montages[2]);
+}
+
+void AAICharacter::ShootArrow()
+{
+	if (Weapon)
+	Weapon->Begin_Fire(); 
 }
 

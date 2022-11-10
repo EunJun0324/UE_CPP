@@ -12,8 +12,8 @@ ACAIController::ACAIController()
     Perception= CreateDefaultSubobject<UAIPerceptionComponent>("Perception");
     SightSense = CreateDefaultSubobject<UAISenseConfig_Sight>("Sight");
 
-    SightSense->SightRadius = 600;
-    SightSense->LoseSightRadius = 800;
+    SightSense->SightRadius = 800;
+    SightSense->LoseSightRadius = 1000;
     SightSense->PeripheralVisionAngleDegrees = 45;
     SightSense->SetMaxAge(2);
 
@@ -68,3 +68,8 @@ void ACAIController::OnPerceptiongUpdated(const TArray<AActor*>& UpdateActors)
 
 void ACAIController::ChanageType(EBehaviorType InType)
 { Blackboard->SetValueAsEnum("Behavior", (uint8)InType); }
+
+ACPlayer* ACAIController::GetTargetPlayer()
+{
+    return Cast<ACPlayer>(Blackboard->GetValueAsObject("Player"));
+}
